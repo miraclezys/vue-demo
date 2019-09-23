@@ -12,28 +12,30 @@ function Compile(el, vm) {
 Compile.prototype = {
     constructor: Compile,
 
-    node2Fragment: (el) => {
+    node2Fragment: function(el) {
         const fragment = document.createDocumentFragment();
         let child;
 
         // 将原生节点拷贝到fragment
         while (child = el.firstChild) {
+            console.log(el, child, el.childrens)
             fragment.appendChild(child);
+            console.log(fragment)
         }
-
         return fragment;
     },
 
-    init: () => {
+    init: function() {
+        console.log(this.$fragment)
         this.compileElement(this.$fragment);
     },
 
-    compileElement: (el) => {
+    compileElement: function(el) {
         let childNodes = el.childNodes;
         let _this = this;
 
         [].slice.call(childNodes).forEach(node => {
-            const text = node.textConent;
+            const text = node.textContent;
             const reg = /\{\{(.*)\}\}/;
 
             if (_this.isElementNode(node)) {
@@ -48,7 +50,7 @@ Compile.prototype = {
         });
     },
 
-    compile: (node) => {
+    compile: function(node) {
         const nodeAttrs = node.attributes;
         let _this = this;
 
@@ -71,37 +73,37 @@ Compile.prototype = {
         })
     },
 
-    compileText: (node, exp) => {
+    compileText: function(node, exp) {
         compileUtil.text(node, this.$vm, exp);
     },
 
-    isDirective: (attr) => {
-        return AbstractRange.indexOf('v-') === '0';
+    isDirective: function(attr) {
+        return attr.indexOf('v-') === '0';
     },
 
-    isEventDirective: (dir) => {
+    isEventDirective: function(dir) {
         return dir.indexOf('on') === 0;
     },
 
-    isElementNode: (node) => {
+    isElementNode: function(node) {
         return node.nodeType === 1;
     },
 
-    isTextNode: (node) => {
+    isTextNode: function(node) {
         return node.nodeType === 3;
     }
 }
 
 const compileUtil = {
-    text: (node, vm, exp) => {
+    text: function(node, vm, exp) {
         this.bind(node, vm, exp, 'text');
     },
 
-    html: (node, vm, exp) => {
+    html: function(node, vm, exp) {
         this.bind(node, vm, exp, 'html');
     },
 
-    model: (node, vm, exp) => {
+    model: function(node, vm, exp) {
         this.bind(node, vm, exp, 'model');
 
         const _this = this;
@@ -119,11 +121,11 @@ const compileUtil = {
         })
     },
 
-    class: (node, vm, exp) => {
+    class: function(node, vm, exp) {
         this.bind(node, vm, exp, 'class');
     },
 
-    bind: (node, vm, exp, dir) => {
+    bind: function(node, vm, exp, dir) {
         const updateFn = updater[dir + 'Updater'];
 
         updaterFn && updaterFn(node, this._getVMVal(vm, exp));
@@ -133,7 +135,7 @@ const compileUtil = {
         });
     },
 
-    eventHandler: (node, vm, exp, dir) => {
+    eventHandler: function(node, vm, exp, dir) {
         const eventType = dir.split(':')[1];
         const fn = vm.$options.methods && vm.$options.methods[exp];
 
@@ -142,7 +144,7 @@ const compileUtil = {
         }
     },
 
-    _getVMVal: (vm, exp) => {
+    _getVMVal: function(vm, exp) {
         let val = vm;
 
         exp = exp.split('.');
@@ -153,7 +155,7 @@ const compileUtil = {
         return val;
     },
 
-    _setVMVal: (vm, exp, value) => {
+    _setVMVal: function(vm, exp, value) {
         let val = vm;
         exp = exp.split('.');
         exp.forEach((k, i) => {

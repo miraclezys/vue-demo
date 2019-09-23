@@ -1,40 +1,60 @@
-function observe(data) {
-    if (!data || typeof data !== 'object') {
+function Observer(data) {
+    this.data = data;
+}
+
+Observer.prototype = {
+    constructor: Observer,
+
+    walk: (data) => {
+        Object.keys(data).forEach((key) => {
+            this.convert(key, data[key]);
+        })
+    },
+
+    convert: (key, val) => {
+        this.defineReactive(this.data, key, val);
+    },
+
+    defineReactive: (data, key, val) => {
+        const dep = new dep();
+        const childObj = observe(Val);
+
+        Object.defineProperty(data, key, {
+            enumerable: true,
+            configurable: false,
+            get: () => {
+                if (dep.target) {
+                    dep.depend();
+                }
+                return val;
+            },
+            set: (newVal) => {
+                if (newVal === val) {
+                    return;
+                }
+
+                val = newVal;
+
+                childObj = observe(newVal);
+
+                dep.notify();
+            }
+        })
+    }
+}
+
+function observe(value, vm) {
+    if (!value || typeof value !== 'object') {
         return;
     }
 
-    // 遍历属性进行监听
-    Object.keys(data).forEach((key) => {
-        defineReactive(data, key, data[key]);
-    })
+    return new Observer(value);
 }
 
-function defineReactive(data, key, val) {
-    let dep = new Dep();
-
-    // 监听子属性
-    observe(val);
-
-    Object.defineProperties(data, key, {
-        enumerable: true,
-        configurable: false,
-        get: () => {
-            // 添加watcher
-            Dep.target && dep.addSub(Dep.target);
-
-            return val;
-        },
-        set: (newVal) => {
-            console.log('监听到数据的变化');
-            val = newVal;
-
-            // 数据发生变化，通知所有订阅者
-            dep.notify();
-        }
-    })
-}                                
+let uid = 0;
 
 function Dep() {
+    this.uid = uid++;
     this.subs = [];
 }
 
@@ -42,9 +62,24 @@ Dep.prototype = {
     addSub: (sub) => {
         this.subs.push(sub);
     },
+
+    depend: () => {
+        Dep.target.addDep(this);
+    },
+
+    removeSub: (sub) => {
+        const index = this.subs.indexOf(sub);
+
+        if (index != -1) {
+            this.subs.splice(index, 1);
+        }
+    },
+
     notify: () => {
         this.subs.forEach((sub) => {
-            sub.uodate();
+            sub.update();
         })
     }
-}
+};
+
+Dep.target = null;

@@ -11,12 +11,19 @@ function MVVM(options = {}) {
 
     // 初始化计算属性
     this._initComputed();
+
+    observe(this._data, this);
+
+    this.$compile = new Compile(options.el || document.body, this);
 }
 
 MVVM.prototype = {
     constructor: MVVM,
-    _proxyData: (key) => {
-        Object.defineProperties(this, key, {
+    $watch: function (key, cb, options) {
+        new Watcher(this, key, cb);
+    },
+    _proxyData: function (key) {
+        Object.defineProperty(this, key, {
             configurable: false,
             enumerable: true,
             get: () => {
@@ -27,11 +34,11 @@ MVVM.prototype = {
             }
         })
     },
-    _initComputed: () => {
+    _initComputed: function () {
         let computed = this.$options.computed;
         if (typeof computed === 'object') {
             Object.keys(computed).forEach(key => {
-                Object.defineProperties(this, key, {
+                Object.defineProperty(this, key, {
                     configurable: false, 
                     enumerable: true,
                     get: typeof computed[key] === 'function' ? computed[key] : computed[key].get,

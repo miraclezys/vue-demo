@@ -16,11 +16,11 @@ function Watcher(vm, expOrFn, cb) {
 Watcher.prototype = {
     constructor: Watcher,
 
-    update: () => {
+    update: function() {
         this.run();
     },
 
-    run: () => {
+    run: function() {
         const value = this.get();
         const ildValue = this.value;
 
@@ -30,21 +30,21 @@ Watcher.prototype = {
         }
     },
 
-    addDep: (dep) => {
+    addDep: function(dep) {
         if (!this.depIds.hasOwnProperty(dep.id)) {
             dep.addSub(this);
             this.depIds[dep.id] = dep;
         }
     },
 
-    get: (key) => {
+    get: function(key) {
         Dep.target = this;
-        this.value = data[key];
+        const value = this.getter.call(this.vm, this.vm);
         Dep.target = null;
         return value;
     },
 
-    parseGetter: (exp) => {
+    parseGetter: function(exp) {
         if (/[^\w.$]/.test(exp)) return;
 
         const exps = exp.split('.');
