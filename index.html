@@ -31,12 +31,15 @@
             }
         },
         computed: {
-            getHelloWord: () => {
+            getHelloWord: function() {
+                // console.log(this.child);
                 return this.someStr + this.child.someStr;
+                // return this.someStr;
             }
         },
         methods: {
-            clickBtn: (e) => {
+            clickBtn: function(e) {
+                console.log(e)
                 const randomStrArr = ['childOne', 'childTwo', 'childThree'];
                 this.child.someStr = randomStrArr[parseInt(Math.random() * 3)];
             }

@@ -18,15 +18,12 @@ Compile.prototype = {
 
         // 将原生节点拷贝到fragment
         while (child = el.firstChild) {
-            console.log(el, child, el.childrens)
             fragment.appendChild(child);
-            console.log(fragment)
         }
         return fragment;
     },
 
     init: function() {
-        console.log(this.$fragment)
         this.compileElement(this.$fragment);
     },
 
@@ -78,7 +75,8 @@ Compile.prototype = {
     },
 
     isDirective: function(attr) {
-        return attr.indexOf('v-') === '0';
+        console.log(attr, attr.indexOf('v-'));
+        return attr.indexOf('v-') === 0;
     },
 
     isEventDirective: function(dir) {
@@ -128,7 +126,7 @@ const compileUtil = {
     bind: function(node, vm, exp, dir) {
         const updateFn = updater[dir + 'Updater'];
 
-        updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+        updateFn && updateFn(node, this._getVMVal(vm, exp));
 
         new Watcher(vm, exp, (value, oldValue) => {
             updateFn && updateFn(node, value, oldValue);
@@ -170,7 +168,7 @@ const compileUtil = {
 
 const updater = {
     textUpdater: (node, value) => {
-        node.textConent = typeof value === 'undefined' ? '' : value;
+        node.textContent = typeof value === 'undefined' ? '' : value;
     },
 
     htmlUpdater: (node, value) => {

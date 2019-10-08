@@ -1,34 +1,35 @@
 function Observer(data) {
     this.data = data;
+    this.walk(data);
 }
 
 Observer.prototype = {
     constructor: Observer,
 
-    walk: (data) => {
+    walk: function(data) {
         Object.keys(data).forEach((key) => {
             this.convert(key, data[key]);
         })
     },
 
-    convert: (key, val) => {
+    convert: function(key, val) {
         this.defineReactive(this.data, key, val);
     },
 
-    defineReactive: (data, key, val) => {
-        const dep = new dep();
-        const childObj = observe(Val);
+    defineReactive: function(data, key, val) {
+        const dep = new Dep();
+        let childObj = observe(val);
 
         Object.defineProperty(data, key, {
             enumerable: true,
             configurable: false,
-            get: () => {
+            get: function() {
                 if (dep.target) {
                     dep.depend();
                 }
                 return val;
             },
-            set: (newVal) => {
+            set: function(newVal) {
                 if (newVal === val) {
                     return;
                 }
@@ -59,15 +60,15 @@ function Dep() {
 }
 
 Dep.prototype = {
-    addSub: (sub) => {
+    addSub: function(sub) {
         this.subs.push(sub);
     },
 
-    depend: () => {
+    depend: function() {
         Dep.target.addDep(this);
     },
 
-    removeSub: (sub) => {
+    removeSub: function(sub) {
         const index = this.subs.indexOf(sub);
 
         if (index != -1) {
@@ -75,7 +76,7 @@ Dep.prototype = {
         }
     },
 
-    notify: () => {
+    notify: function() {
         this.subs.forEach((sub) => {
             sub.update();
         })
