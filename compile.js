@@ -75,7 +75,6 @@ Compile.prototype = {
     },
 
     isDirective: function(attr) {
-        console.log(attr, attr.indexOf('v-'));
         return attr.indexOf('v-') === 0;
     },
 
@@ -114,7 +113,7 @@ const compileUtil = {
                 return;
             }
 
-            _this.setVMVal(vm, exp, newValue);
+            _this._setVMVal(vm, exp, newValue);
             val = newValue;
         })
     },

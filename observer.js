@@ -24,7 +24,7 @@ Observer.prototype = {
             enumerable: true,
             configurable: false,
             get: function() {
-                if (dep.target) {
+                if (Dep.target) {
                     dep.depend();
                 }
                 return val;

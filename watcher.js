@@ -22,7 +22,7 @@ Watcher.prototype = {
 
     run: function() {
         const value = this.get();
-        const ildValue = this.value;
+        const oldValue = this.value;
 
         if (value !== oldValue) {
             this.value = value;
@@ -31,9 +31,9 @@ Watcher.prototype = {
     },
 
     addDep: function(dep) {
-        if (!this.depIds.hasOwnProperty(dep.id)) {
+        if (!this.depIds.hasOwnProperty(dep.uid)) {
             dep.addSub(this);
-            this.depIds[dep.id] = dep;
+            this.depIds[dep.uid] = dep;
         }
     },
 
